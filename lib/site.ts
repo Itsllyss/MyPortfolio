@@ -39,6 +39,7 @@ export const CALL = SITE.bookingUrl
 
 // Shorter prompts for the row above the composer once the chat has started.
 export const FOLLOW_UPS = [
+  { label: 'Me', prompt: 'Tell me about yourself' }, // same prompt as the hero "Me" card: shows the About card
   { label: 'Projects', prompt: 'Show me your best projects' },
   { label: 'Tools', prompt: 'What tools do you use?' },
   { label: 'Certificates', prompt: 'What certifications do you have?' },
