@@ -16,3 +16,5 @@ next-env.d.ts
 WorthRentals/
 .taste-skill
 shots/
+.env*
+!.env.example

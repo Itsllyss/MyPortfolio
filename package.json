@@ -16,6 +16,9 @@
     "@ai-sdk/groq": "^4.0.85",
     "@ai-sdk/openai": "^4.0.121",
     "@ai-sdk/react": "^4.0.180",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
     "ai": "^7.0.176",
     "framer-motion": "^14.14.0",
     "lucide-react": "^1.74.0",
@@ -23,12 +26,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.0",
-    "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.0",
+    "remark-gfm": "^4.0.1",
     "typescript": "^5.9.0"
   }
 }

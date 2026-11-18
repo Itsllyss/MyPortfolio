@@ -9,7 +9,10 @@ export const SITE = {
     // Google Calendar appointment schedule; calls run on Google Meet.
   bookingUrl: process.env.NEXT_PUBLIC_BOOKING_URL || 'https://calendar.app.google/3czX9RJBpxAWNuPa6',
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'lysabulo@outlook.com',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+  // Share-preview base URL: set it, or on Vercel it comes from the production domain.
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000'),
 } as const;
 
 // "Book a call": the Google Calendar booking page (opens in a new tab). If the
