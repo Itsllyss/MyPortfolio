@@ -4,7 +4,7 @@ import { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { hasCards, toBlocks } from '@/lib/blocks';
-import { CertificateCards, ContactCard, ProjectGrid, ProjectSingle, ToolsGrid } from './Cards';
+import { AboutCard, CertificateCards, ContactCard, ProjectGrid, ProjectSingle, ToolsGrid } from './Cards';
 
 type Props = {
   role: 'user' | 'assistant';
@@ -61,6 +61,8 @@ function Message({ role, text, streaming = false, onAsk }: Props) {
             return <ProjectSingle key={i} id={b.id} />;
           case 'tools':
             return <ToolsGrid key={i} />;
+          case 'about':
+            return <AboutCard key={i} />;
           case 'certificates':
             return <CertificateCards key={i} />;
           case 'contact':

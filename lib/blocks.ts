@@ -1,5 +1,5 @@
 // Splits an assistant reply into markdown and the visual cards the system
-// prompt asks for: <<projects>>, <<project:id>>, <<tools>>, <<certificates>>, <<contact>>.
+// prompt asks for: <<projects>>, <<project:id>>, <<tools>>, <<certificates>>, <<about>>, <<contact>>.
 
 export type Block =
   | { kind: 'md'; text: string }
@@ -7,9 +7,10 @@ export type Block =
   | { kind: 'project'; id: string }
   | { kind: 'tools' }
   | { kind: 'certificates' }
+  | { kind: 'about' }
   | { kind: 'contact' };
 
-const TOKEN = /<<\s*(projects|tools|certificates|contact|project\s*:\s*([a-z]+))\s*>>/gi;
+const TOKEN = /<<\s*(projects|tools|certificates|about|contact|project\s*:\s*([a-z]+))\s*>>/gi;
 
 export function toBlocks(raw: string, streaming: boolean): Block[] {
   // While streaming, hide a half-written token ("<<proj") at the end.
@@ -28,7 +29,7 @@ export function toBlocks(raw: string, streaming: boolean): Block[] {
     seen.add(key);
 
     if (m[2]) blocks.push({ kind: 'project', id: m[2].toLowerCase() });
-    else blocks.push({ kind: key as 'projects' | 'tools' | 'certificates' | 'contact' });
+    else blocks.push({ kind: key as 'projects' | 'tools' | 'certificates' | 'about' | 'contact' });
   }
 
   const rest = text.slice(last);

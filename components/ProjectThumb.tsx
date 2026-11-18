@@ -1,9 +1,9 @@
 import type { ProjectId } from '@/lib/projects';
 
-// Thumbnails show the work without client names. Fleet and listings are live
-// HTML/SVG built from the real SOP stages, tags and boards (no screenshots of
-// those systems were supplied); the AI project is a cropped screenshot of the
-// real Daily Market Watch report, cut below the team/agency line.
+// Thumbnails show the work without client names. Fleet is Workflow 1 from the
+// GoHighLevel workflow PDFs; listings is live SVG built from the real SOP
+// boards (no screenshot supplied); the AI project is a cropped screenshot of
+// the real Daily Market Watch report, cut below the team/agency line.
 // Client slot: drop real screenshots in public/projects/ and swap them in here.
 
 export default function ProjectThumb({ id }: { id: ProjectId }) {
@@ -70,49 +70,17 @@ export default function ProjectThumb({ id }: { id: ProjectId }) {
     );
   }
 
-  // fleet
-  const cols = [
-    { name: 'Reserved', cards: [{ code: 'MS01', cls: 'Midsize', tag: 'reservation-reviewed' }] },
-    {
-      name: 'Rented',
-      cards: [
-        { code: 'FS01', cls: 'Fullsize', tag: 'active-rental' },
-        { code: 'SV01', cls: 'SUV', tag: 'active-rental' },
-      ],
-    },
-    { name: 'Maintenance', cards: [{ code: 'MS02', cls: 'Midsize', tag: 'vehicle-maintenance', live: true }] },
-    { name: 'Available', cards: [{ code: 'FS02', cls: 'Fullsize', tag: 'past-rental' }] },
-  ];
+  // fleet: Workflow 1, ad lead intake into Conversation AI (no client names on it)
   return (
-    <div
-      className="thumb thumb-ui thumb-fleet"
-      role="img"
-      aria-label="Vehicle inventory pipeline with Reserved, Rented, Maintenance and Available stages, and an automatic maintenance SMS"
-    >
-      <div className="fl">
-      <div className="fl-bar">
-        <span className="fl-title">Vehicle inventory</span>
-        <span className="fl-count">5 vehicles</span>
-      </div>
-      <div className="fl-cols">
-        {cols.map((c) => (
-          <div className="fl-col" key={c.name}>
-            <span className="fl-col-name">{c.name}</span>
-            {c.cards.map((card) => (
-              <div className={`fl-card${'live' in card && card.live ? ' is-live' : ''}`} key={card.code}>
-                <b>{card.code}</b>
-                <span>{card.cls}</span>
-                <i>{card.tag}</i>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-      <div className="fl-toast">
-        <span className="fl-dot" />
-        SMS sent: maintenance reminder
-      </div>
-      </div>
+    <div className="thumb thumb-shot">
+      <img
+        src="/projects/fleet-workflow.jpg"
+        alt="GoHighLevel workflow: survey submitted, opportunity created, Meta Conversion API, alerts, email, then Conversation AI branching on Positive, Neutral, Future, Negative and Timeout replies"
+        width={1200}
+        height={750}
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   );
 }

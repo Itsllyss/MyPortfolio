@@ -68,6 +68,7 @@ is needed: the chat route sets its own `maxDuration`.
 | Everything the avatar knows (resume, projects, fun facts, tone) | `lib/prompt.ts` |
 | Project cards: titles, summaries, metric badges | `lib/projects.ts` |
 | Certificates | `lib/certificates.ts` |
+| Project 1's 17 workflows (detail view + avatar knowledge) | `lib/fleet-workflows.ts`, PDFs in `public/docs/` |
 | Project thumbnails | `components/ProjectThumb.tsx`, `public/projects/` |
 | Name, role, suggestion chips | `lib/site.ts` |
 | Colours, type, layout | `app/globals.css` (tokens at the top) |
@@ -108,6 +109,12 @@ as the `ai` thumbnail does.
 
 ## Notes
 
+- **Rate-limit fallback:** Groq's free tier allows 200,000 tokens a day per model, and each
+  message sends the avatar's ~5,000-token knowledge base (about 40 messages a day). When the main
+  model (`openai/gpt-oss-120b`) is rate-limited, the chat answers with `openai/gpt-oss-20b`, which
+  has its own allowance, for the next 10 minutes. Set `CHAT_FALLBACK_MODEL` to change it. If both
+  are limited, visitors see a short "busy, try again" message with your email. For steady traffic,
+  move to Groq's paid Dev tier.
 - **Cost guard:** the chat route sends at most 16 messages of history, cuts messages at 2,000
   characters, caps replies at 1,400 tokens (reasoning included) and allows 20 requests a minute per visitor. The limit is
   in memory: it holds on Render's single server, and is best-effort on Vercel.

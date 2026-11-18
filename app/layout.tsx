@@ -25,18 +25,19 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: '#ffffff',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
 };
 
-// Set the theme before first paint so there is no flash. Dark is the default.
-const themeScript = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=(t==='light'||t==='dark')?t:'dark';if(t==='light'){var m=document.querySelector('meta[name="theme-color"]');m&&m.setAttribute('content','#ffffff')}}catch(e){document.documentElement.dataset.theme='dark'}`;
+// Set the theme before first paint so there is no flash. Light is the default;
+// dark only when the visitor chose it with the toggle (saved in localStorage).
+const themeScript = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');m&&m.setAttribute('content','#000000')}}catch(e){document.documentElement.dataset.theme='light'}`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-type="software" data-theme="dark" data-motion="on" className={geist.variable} suppressHydrationWarning>
+    <html lang="en" data-type="software" data-theme="light" data-motion="on" className={geist.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

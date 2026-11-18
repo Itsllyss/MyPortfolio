@@ -6,9 +6,11 @@ import {
   smoothStream,
   streamText,
   toUIMessageStream,
+  wrapLanguageModel,
   type UIMessage,
 } from 'ai';
 import { SYSTEM_PROMPT } from '@/lib/prompt';
+import { SITE } from '@/lib/site';
 
 export const maxDuration = 30;
 
@@ -33,12 +35,53 @@ function limited(ip: string) {
   return entry.n > LIMIT;
 }
 
+// True for provider rate-limit errors (HTTP 429, per-minute or per-day caps),
+// also when wrapped in a retry error.
+function isRateLimit(error: unknown): boolean {
+  const queue: unknown[] = [error];
+  const seen = new Set<unknown>();
+  while (queue.length) {
+    const e = queue.shift() as { statusCode?: number; message?: unknown; cause?: unknown; lastError?: unknown; errors?: unknown } | null;
+    if (!e || typeof e !== 'object' || seen.has(e)) continue;
+    seen.add(e);
+    if (e.statusCode === 429) return true;
+    if (typeof e.message === 'string' && /rate.?limit|tokens per (day|minute)/i.test(e.message)) return true;
+    queue.push(e.cause, e.lastError, ...(Array.isArray(e.errors) ? e.errors : []));
+  }
+  return false;
+}
+
+// When the main Groq model hits its rate limit, answer with a smaller model
+// that has its own separate allowance, and skip the main one for a while.
+const FALLBACK_COOLDOWN_MS = 10 * 60_000;
+let primaryBlockedUntil = 0;
+
+function groqWithFallback(apiKey: string, name: string | undefined) {
+  const groq = createGroq({ apiKey, baseURL: process.env.GROQ_BASE_URL || undefined });
+  // Groq retired the Llama 3.x 70B models; gpt-oss-120b is its strongest fast chat model.
+  const primary = groq(name || 'openai/gpt-oss-120b');
+  const fallback = groq(process.env.CHAT_FALLBACK_MODEL?.trim() || 'openai/gpt-oss-20b');
+  return wrapLanguageModel({
+    model: primary,
+    middleware: {
+      wrapStream: async ({ doStream, params }) => {
+        if (Date.now() < primaryBlockedUntil) return fallback.doStream(params);
+        try {
+          return await doStream();
+        } catch (error) {
+          if (!isRateLimit(error)) throw error;
+          primaryBlockedUntil = Date.now() + FALLBACK_COOLDOWN_MS;
+          console.warn('[chat] main model rate-limited; answering with the fallback model for 10 minutes');
+          return fallback.doStream(params);
+        }
+      },
+    },
+  });
+}
+
 function pickModel() {
   const name = process.env.CHAT_MODEL?.trim();
-  if (process.env.GROQ_API_KEY) {
-    // Groq retired the Llama 3.x 70B models; gpt-oss-120b is its strongest fast chat model.
-    return createGroq({ apiKey: process.env.GROQ_API_KEY, baseURL: process.env.GROQ_BASE_URL || undefined })(name || 'openai/gpt-oss-120b');
-  }
+  if (process.env.GROQ_API_KEY) return groqWithFallback(process.env.GROQ_API_KEY, name);
   if (process.env.OPENAI_API_KEY) {
     return createOpenAI({ apiKey: process.env.OPENAI_API_KEY })(name || 'gpt-4o-mini');
   }
@@ -85,7 +128,7 @@ export async function POST(req: Request) {
     // gpt-oss reasons before it answers: keep that short and out of the reply,
     // and leave room for it inside the token cap.
     maxOutputTokens: 1400,
-    temperature: 0.7,
+    temperature: 0.5, // a little lower: workflow answers must match the listed logic
     providerOptions: { groq: { reasoningEffort: 'low', reasoningFormat: 'hidden' } },
     experimental_transform: smoothStream({ delayInMs: 12, chunking: 'word' }),
   });
@@ -93,7 +136,10 @@ export async function POST(req: Request) {
   return createUIMessageStreamResponse({
     stream: toUIMessageStream({
       stream: result.stream,
-      onError: () => 'The reply stopped halfway. Send your message again.',
+      onError: (error) =>
+        isRateLimit(error)
+          ? `I'm getting more questions than I can answer right now. Try again in a few minutes, or email me at ${SITE.email}.`
+          : 'The reply stopped halfway. Send your message again.',
     }),
   });
 }

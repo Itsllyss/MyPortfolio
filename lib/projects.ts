@@ -19,9 +19,9 @@ export const PROJECTS: Project[] = [
     id: 'fleet',
     title: 'Automated Vehicle Rental & Fleet Lifecycle CRM System',
     summary:
-      'Reservation to return in one GoHighLevel system: vehicle offers by SMS, deposits, weekly invoices by rate tier, maintenance checks and contract renewals run on their own.',
-    stack: ['GoHighLevel', 'SMS', 'Email', 'Payments'],
-    metrics: ['9-stage rental lifecycle', 'Weekly invoices by rate tier', '25-day renewal loop'],
+      'Ad lead to returned car in one GoHighLevel system: Conversation AI qualifies leads, then offers, deposits, rate-tiered invoices, renewals and maintenance run across 17 workflows.',
+    stack: ['GoHighLevel', 'Conversation AI', 'SMS', 'Email', 'Payments'],
+    metrics: ['17 automated workflows', '3 system phases', 'Daily & weekly rate tiers'],
     ask: 'Walk me through the vehicle rental and fleet CRM system',
   },
   {

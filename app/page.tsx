@@ -37,7 +37,7 @@ function readError(err: Error | undefined) {
 
 export default function Home() {
   const { messages, sendMessage, status, stop, error, regenerate, clearError } = useChat();
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
   const [paused, setPaused] = useState(false);
   const [happy, setHappy] = useState(false);
   const scroller = useRef<HTMLElement>(null);

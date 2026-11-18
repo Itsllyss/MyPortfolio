@@ -1,16 +1,25 @@
 'use client';
 
-import { Award, CalendarDays, Mail, Video } from 'lucide-react';
+import { Award, Building2, CalendarDays, Mail, MapPin, Video } from 'lucide-react';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { ABOUT } from '@/lib/about';
 import { CERTIFICATES } from '@/lib/certificates';
+import { DETAILS } from '@/lib/project-details';
 import { PROJECTS, getProject, type Project } from '@/lib/projects';
 import { CALL, SITE } from '@/lib/site';
+import ProjectDetail from './ProjectDetail';
 import ProjectThumb from './ProjectThumb';
 
 type Ask = (text: string) => void;
 
 function ProjectCard({ project, onAsk, wide }: { project: Project; onAsk?: Ask; wide?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const detail = DETAILS[project.id];
+  const hasDetail = !!detail;
+  const linked = hasDetail || !!onAsk;
   return (
-    <article className={`pcard${wide ? ' pcard-wide' : ''}${onAsk ? ' is-linked' : ''}`}>
+    <article className={`pcard${wide ? ' pcard-wide' : ''}${linked ? ' is-linked' : ''}`}>
       <div className="pcard-media">
         <ProjectThumb id={project.id} />
       </div>
@@ -22,12 +31,24 @@ function ProjectCard({ project, onAsk, wide }: { project: Project; onAsk?: Ask; 
             <li key={m}>{m}</li>
           ))}
         </ul>
-        {onAsk && (
-          <button type="button" className="pcard-cta link" onClick={() => onAsk(project.ask)}>
-            See how it works
+        {hasDetail ? (
+          <button type="button" className="pcard-cta link" onClick={() => setOpen(true)} aria-haspopup="dialog">
+            {detail.cta}
           </button>
+        ) : (
+          onAsk && (
+            <button type="button" className="pcard-cta link" onClick={() => onAsk(project.ask)}>
+              See how it works
+            </button>
+          )
         )}
       </div>
+      {hasDetail &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <ProjectDetail project={project} config={detail} open={open} onClose={() => setOpen(false)} />,
+          document.body,
+        )}
     </article>
   );
 }
@@ -53,7 +74,7 @@ export function ProjectSingle({ id }: { id: string }) {
 const TOOLS: { group: string; items: { name: string; icon?: string; tile?: string }[] }[] = [
   { group: 'CRM and funnels', items: [{ name: 'GoHighLevel' }, { name: 'Agentbox CRM' }, { name: 'Systeme.io' }] },
   { group: 'Boards and automation', items: [{ name: 'monday.com' }, { name: 'Make.com', icon: '/icons/make.svg' }] },
-  { group: 'AI and data', items: [{ name: 'Claude', icon: '/icons/claude.svg' }, { name: 'Homer' }] },
+  { group: 'AI and data', items: [{ name: 'Claude', icon: '/icons/claude.svg' }, { name: 'OpenAI' }, { name: 'Homer' }] },
   {
     group: 'Messages and booking',
     items: [
@@ -114,6 +135,63 @@ export function CertificateCards() {
         </li>
       ))}
     </ul>
+  );
+}
+
+export function AboutCard() {
+  return (
+    <section className="about" aria-label="About Allyssa">
+      <div className="about-head">
+        <img className="about-avatar" src="/avatar/frames/frame_091.webp" alt="" width={56} height={56} />
+        <div>
+          <h3>{ABOUT.headline}</h3>
+          <p className="about-meta">
+            <span>
+              <MapPin size={14} aria-hidden="true" />
+              {ABOUT.location}
+            </span>
+            <span>
+              <Building2 size={14} aria-hidden="true" />
+              {ABOUT.experience}
+            </span>
+          </p>
+        </div>
+      </div>
+      <p className="about-pitch">{ABOUT.pitch}</p>
+      <ul className="about-stack" aria-label="Core stack">
+        {ABOUT.stack.map((t) => (
+          <li key={t.name} className="tool">
+            {'icon' in t && (
+              <span className="tool-icon">
+                <img src={t.icon} alt="" width={16} height={16} />
+              </span>
+            )}
+            {t.name}
+          </li>
+        ))}
+      </ul>
+      <ol className="services">
+        {ABOUT.services.map((s, i) => (
+          <li key={s.title}>
+            <span className="service-step" aria-hidden="true">
+              {i + 1}
+            </span>
+            <div>
+              <h4>{s.title}</h4>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <a
+        className="btn btn-primary"
+        href={CALL.href}
+        {...(CALL.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      >
+        <CalendarDays size={18} aria-hidden="true" />
+        Book a free discovery call
+      </a>
+    </section>
   );
 }
 
