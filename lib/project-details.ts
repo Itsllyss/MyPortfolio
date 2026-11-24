@@ -1,5 +1,6 @@
 // Which projects open a detail view, and what it shows.
 
+import { BOOKING_WORKFLOWS } from './booking-workflows';
 import { FLEET_PHASES, FLEET_WORKFLOW_COUNT, type Phase } from './fleet-workflows';
 import { LISTING_SCENARIOS } from './listing-workflows';
 import { MARKET_WATCH } from './market-watch-workflows';
@@ -12,6 +13,7 @@ export type DetailConfig = {
   stepLabel: 'Step' | 'Scenario';
   extraStack: string[];
   report?: boolean; // Project 1's Make.com reporting module as a last tab
+  engine?: 'booking'; // Project 4: its own tabbed view (node flow, inspector, SMS preview)
 };
 
 export const DETAILS: Partial<Record<ProjectId, DetailConfig>> = {
@@ -36,5 +38,13 @@ export const DETAILS: Partial<Record<ProjectId, DetailConfig>> = {
     groups: [MARKET_WATCH],
     stepLabel: 'Step',
     extraStack: ['Claude Scheduled Tasks', 'MCP connectors', 'Microsoft Outlook'],
+  },
+  booking: {
+    cta: `View all ${BOOKING_WORKFLOWS.length} workflows`,
+    archTitle: `Architecture: ${BOOKING_WORKFLOWS.length} GoHighLevel workflows that hand contacts to each other through one set of status tags`,
+    groups: [],
+    stepLabel: 'Step',
+    extraStack: [],
+    engine: 'booking',
   },
 };

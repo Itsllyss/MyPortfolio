@@ -13,27 +13,12 @@ import {
   Wrench,
   X,
 } from 'lucide-react';
-import { Fragment, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { FLEET_REPORTING, type Phase } from '@/lib/fleet-workflows';
 import type { DetailConfig } from '@/lib/project-details';
 import type { Project } from '@/lib/projects';
-
-// `code` spans in the workflow text become small tag chips.
-function Rich({ text }: { text: string }) {
-  return (
-    <>
-      {text.split('`').map((part, i) =>
-        i % 2 ? (
-          <code key={i} className="tag">
-            {part}
-          </code>
-        ) : (
-          <Fragment key={i}>{part}</Fragment>
-        ),
-      )}
-    </>
-  );
-}
+import BookingEngine from './BookingEngine';
+import Rich from './Rich';
 
 const ALERT_ICONS = [Wrench, Siren, CalendarClock, CalendarX];
 
@@ -254,7 +239,9 @@ export default function ProjectDetail({ project, config, open, onClose }: Props)
       ref={ref}
       className="detail"
       aria-labelledby={`${uid}-title`}
-      onClose={onClose}
+      onClose={(e) => {
+        if (e.target === ref.current) onClose(); // not a nested lightbox closing
+      }}
       onClick={(e) => {
         if (e.target === ref.current) onClose(); // click on the backdrop
       }}
@@ -273,7 +260,7 @@ export default function ProjectDetail({ project, config, open, onClose }: Props)
         <div className="detail-scroll">
           <section className="detail-arch" aria-labelledby={`${uid}-arch`}>
             <h3 id={`${uid}-arch`}>{config.archTitle}</h3>
-            {single ? (
+            {config.engine ? null : single ? (
               <ol className="arch" style={{ '--n': config.groups[0].steps.length } as CSSProperties}>
                 {config.groups[0].steps.map((s, i) => (
                   <li key={s.title}>
@@ -328,7 +315,9 @@ export default function ProjectDetail({ project, config, open, onClose }: Props)
             </ul>
           </section>
 
-          {tabs.length > 1 && (
+          {config.engine === 'booking' && <BookingEngine key={round} uid={uid} />}
+
+          {!config.engine && tabs.length > 1 && (
             <div className="tabs" role="tablist" aria-label="Workflow phases">
               {tabs.map((t, i) => (
                 <button
@@ -351,6 +340,7 @@ export default function ProjectDetail({ project, config, open, onClose }: Props)
             </div>
           )}
 
+          {!config.engine && (
           <section
             key={`${tab}-${round}`}
             id={`${uid}-panel`}
@@ -359,6 +349,7 @@ export default function ProjectDetail({ project, config, open, onClose }: Props)
           >
             {group ? <PhasePanel phase={group} uid={uid} label={config.stepLabel} /> : <ReportPanel />}
           </section>
+          )}
         </div>
       </div>
     </dialog>

@@ -1,9 +1,9 @@
-// The three case studies shown as cards when the avatar writes <<projects>>.
+// The four case studies shown as cards when the avatar writes <<projects>>.
 // Every badge is a fact taken from the SOPs or the screenshot in the source
 // documents. Add time-saved figures (e.g. "25–30 hrs saved/week") only once
 // you have the numbers to back them.
 
-export type ProjectId = 'fleet' | 'listings' | 'ai';
+export type ProjectId = 'fleet' | 'listings' | 'ai' | 'booking';
 
 export type Project = {
   id: ProjectId;
@@ -41,6 +41,15 @@ export const PROJECTS: Project[] = [
     stack: ['Claude', 'Homer', 'Make.com'],
     metrics: ['1,000+ listings tracked daily', 'Daily market report', 'Campaign emails auto-drafted'],
     ask: 'Walk me through the applied AI and content automation work',
+  },
+  {
+    id: 'booking',
+    title: 'Automated Booking, No-Show & Lead Recovery Engine (GoHighLevel)',
+    summary:
+      'End-to-end appointment scheduling, missed-call text-back and ghosted-lead recovery across 4 modular GoHighLevel workflows with zero-collision tag hygiene.',
+    stack: ['GoHighLevel', 'CRM Architecture', 'SMS & Email Automation', 'Tag State Machine', 'Lead Recovery'],
+    metrics: ['4 modular workflows', '1-minute missed-call text-back', '24 h and 2 h appointment reminders'],
+    ask: 'Walk me through the booking, no-show and lead recovery engine',
   },
 ];
 

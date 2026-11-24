@@ -22,6 +22,21 @@ export default function ProjectThumb({ id }: { id: ProjectId }) {
     );
   }
 
+  if (id === 'booking') {
+    return (
+      <div className="thumb thumb-shot">
+        <img
+          src="/projects/booking-workflow.jpg"
+          alt="GoHighLevel workflow: appointment cancelled, confirmed and no-show triggers feed one router that splits into a no-show or cancelled branch and a confirmed branch"
+          width={832}
+          height={520}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    );
+  }
+
   if (id === 'listings') {
     const lanes = [
       { y: 62, label: 'Listings', note: 'Listing card' },
