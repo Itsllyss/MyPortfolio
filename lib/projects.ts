@@ -37,9 +37,9 @@ export const PROJECTS: Project[] = [
     id: 'ai',
     title: 'Applied AI & Content Automation',
     summary:
-      'Custom AI interfaces built with Claude: a daily market watch over 1,000+ active listings, plus campaign update emails drafted automatically through Make.',
-    stack: ['Claude', 'Homer', 'Make.com'],
-    metrics: ['1,000+ listings tracked daily', 'Daily market report', 'Campaign emails auto-drafted'],
+      'A Claude scheduled task tracks 1,197+ active listings and the Sydney clearance rate every morning, publishes an interactive Daily Market Watch report, and drafts the Outlook campaign email through Make.',
+    stack: ['Claude', 'Homer', 'Domain', 'Make.com'],
+    metrics: ['1,197+ listings tracked daily', 'Sydney clearance rate tracking', 'Outlook campaign auto-drafted'],
     ask: 'Walk me through the applied AI and content automation work',
   },
   {

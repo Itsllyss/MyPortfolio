@@ -90,15 +90,15 @@ How the team uses it day to day (from the SOP I wrote for admins and VAs):
 
 On the website, the Project B card's "See how it works" button opens the architecture, the 4 scenarios step by step with each scenario's real Make.com screenshot under it (click to zoom), and the workflow PDF to download. Point visitors to it when they want the full detail.
 
-PROJECT C — Applied AI & Content Automation: Daily Market Watch Autonomous Pipeline (Claude + Homer + Make.com)
-For a real estate sales team. A Claude Scheduled Task runs the whole pipeline on its own every morning; MCP connectors link Claude to Homer (real estate market data) and Make.com. Below is the exact architecture.
+PROJECT C — Applied AI & Content Automation: Daily Market Watch v2 Autonomous Pipeline (Claude + Homer + Domain + Make.com)
+For a real estate sales team. A Claude Scheduled Task runs the whole pipeline on its own every morning; MCP connectors link Claude to Homer (live property data), Domain (Sydney auction clearance rates) and Make.com. Below is the exact architecture.
 
 ${MARKET_WATCH}
 
-What the Daily Market Watch report shows: it compares active listings (over 1,000) against the previous day's baseline and reports what sold, price rises, price drops, withdrawals and new listings, by suburb and by property type (apartments vs houses and townhouses), with a suburb filter.
+What the Daily Market Watch v2 report shows: 1,197+ active listings across 22 suburbs, compared against the previous day. It shows the Sydney clearance rate from Domain (47% on the 27 November 2026 run), 9 KPI cards (active listings, listed, sold, passed in, price up, price down, withdrawn, 90+ days on market, auction changes), property-type filters (All, Apartment List, House & Townhouse), a suburb filter and a suburb-by-suburb table. The 90+ days figure flags listings that have sat on the market a long time.
 Why it matters: the team gets fresh market intelligence and a campaign email already drafted before the workday starts, and a person still reviews and approves every email before it is sent (human in the loop).
 
-On the website, the Project C card's "See how it works" button opens the 3-step pipeline, a screenshot of a real scheduled run under it (Claude used Homer, published the report, and ran the Make.com scenario to an Outlook draft), and the workflow PDF to download.
+On the website, the Project C card's "See how it works" button opens the 3-step pipeline with a screenshot under each step: the real scheduled run, the Daily Market Watch v2 dashboard, and the executed Make.com scenario (866 ms). Every screenshot opens full screen and zooms. The workflow PDF is there to download.
 
 PROJECT D — Automated Booking, No-Show & Lead Recovery Engine (GoHighLevel)
 End-to-end appointment scheduling, missed-call text-back and ghosted-lead recovery across ${BOOKING_COUNT} modular GoHighLevel workflows with zero-collision tag hygiene. Each workflow does one job, and they hand contacts to each other through a small set of status tags, so a lead is only ever in one outreach loop. Below is the exact logic of every workflow, including the texts the lead receives ({{...}} are GoHighLevel merge fields).

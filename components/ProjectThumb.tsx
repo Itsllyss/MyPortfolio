@@ -2,8 +2,8 @@ import type { ProjectId } from '@/lib/projects';
 
 // Thumbnails show the work without client names. Fleet is Workflow 1 from the
 // GoHighLevel workflow PDFs; listings is live SVG built from the real SOP
-// boards (no screenshot supplied); the AI project is a cropped screenshot of
-// the real Daily Market Watch report, cut below the team/agency line.
+// boards (no screenshot supplied); the AI project is the top of the anonymised
+// Daily Market Watch v2 dashboard (no client or agency names).
 // Client slot: drop real screenshots in public/projects/ and swap them in here.
 
 export default function ProjectThumb({ id }: { id: ProjectId }) {
@@ -11,10 +11,10 @@ export default function ProjectThumb({ id }: { id: ProjectId }) {
     return (
       <div className="thumb thumb-shot">
         <img
-          src="/projects/market-watch.jpg"
-          alt="Daily Market Watch report: 1,097 active listings, 5 sold, 13 price rises, with a suburb selector"
-          width={818}
-          height={491}
+          src="/projects/market-watch-v2.jpg"
+          alt="Daily Market Watch v2: 47% Sydney clearance rate, 1,197 active listings, KPI cards and suburb filters"
+          width={980}
+          height={612}
           loading="lazy"
           decoding="async"
         />

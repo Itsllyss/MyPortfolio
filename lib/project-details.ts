@@ -35,7 +35,7 @@ export const DETAILS: Partial<Record<ProjectId, DetailConfig>> = {
   },
   ai: {
     cta: 'See how it works',
-    archTitle: 'Architecture: a scheduled Claude task, connected to Homer and Make.com through MCP, in 3 steps',
+    archTitle: 'Architecture: a scheduled Claude task, connected to Homer, Domain and Make.com through MCP, in 3 steps',
     groups: [MARKET_WATCH],
     stepLabel: 'Step',
     extraStack: ['Claude Scheduled Tasks', 'MCP connectors', 'Microsoft Outlook'],

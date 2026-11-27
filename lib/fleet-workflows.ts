@@ -9,7 +9,7 @@ export type WorkflowStep = {
   span?: string; // one-line "trigger to result" under that label
   shot?: Shot; // cropped workflow screenshot shown under the step
 };
-export type Shot = { src: string; width: number; height: number };
+export type Shot = { src: string; width: number; height: number; alt?: string };
 export type Phase = {
   id: string;
   tab: string;

@@ -96,7 +96,7 @@ function PhasePanel({ phase, uid, label }: { phase: Phase; uid: string; label: s
               <Shot
                 className="step-shot"
                 onOpen={show}
-                zoom={{ ...s.shot, title: s.title, alt: `${tool} for ${label.toLowerCase()} ${i + 1}: ${s.title}` }}
+                zoom={{ ...s.shot, title: s.title, alt: s.shot.alt ?? `${tool} for ${label.toLowerCase()} ${i + 1}: ${s.title}` }}
               />
             )}
           </li>
