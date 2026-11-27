@@ -9,13 +9,18 @@ import {
   wrapLanguageModel,
   type UIMessage,
 } from 'ai';
-import { SYSTEM_PROMPT } from '@/lib/prompt';
+import { buildSystemPrompt, detectFocus } from '@/lib/prompt';
 import { SITE } from '@/lib/site';
 
 export const maxDuration = 30;
 
-const MAX_HISTORY = 16; // messages sent to the model
+const MAX_HISTORY = 10; // messages sent to the model
 const MAX_CHARS = 2000; // per user message
+const MAX_OUTPUT = 1000; // reply allowance, reasoning included
+// Groq's free tier allows 8,000 tokens per minute and counts a request as its
+// prompt plus MAX_OUTPUT. Stay under it with room to spare.
+const TOKEN_BUDGET = 7000;
+const tokens = (chars: number) => Math.ceil(chars / 4); // measured ~4.5 chars per token on this prompt
 const LIMIT = 20; // requests per IP per window
 const WINDOW_MS = 60_000;
 
@@ -120,14 +125,26 @@ export async function POST(req: Request) {
       .filter((p) => p.type === 'text')
       .map((p) => (p.type === 'text' ? { ...p, text: p.text.slice(0, MAX_CHARS) } : p)),
   }));
+  const textOf = (m: (typeof recent)[number]) => m.parts.map((p) => (p.type === 'text' ? p.text : '')).join('');
+
+  // Load full detail only for the projects this visitor is asking about.
+  let focus = detectFocus(recent.filter((m) => m.role === 'user').map(textOf));
+  let system = buildSystemPrompt(focus);
+  const size = () => tokens(system.length + recent.reduce((n, m) => n + textOf(m).length, 0)) + MAX_OUTPUT;
+  // Over budget: drop the second project's detail, then the oldest messages.
+  if (size() > TOKEN_BUDGET && focus.length > 1) {
+    focus = focus.slice(0, 1);
+    system = buildSystemPrompt(focus);
+  }
+  while (size() > TOKEN_BUDGET && recent.length > 1) recent.shift();
 
   const result = streamText({
     model,
-    system: SYSTEM_PROMPT,
+    system,
     messages: await convertToModelMessages(recent),
     // gpt-oss reasons before it answers: keep that short and out of the reply,
     // and leave room for it inside the token cap.
-    maxOutputTokens: 1400,
+    maxOutputTokens: MAX_OUTPUT,
     temperature: 0.5, // a little lower: workflow answers must match the listed logic
     providerOptions: { groq: { reasoningEffort: 'low', reasoningFormat: 'hidden' } },
     experimental_transform: smoothStream({ delayInMs: 12, chunking: 'word' }),
@@ -136,10 +153,12 @@ export async function POST(req: Request) {
   return createUIMessageStreamResponse({
     stream: toUIMessageStream({
       stream: result.stream,
-      onError: (error) =>
-        isRateLimit(error)
+      onError: (error) => {
+        console.error('[chat] reply failed:', error instanceof Error ? error.message : error);
+        return isRateLimit(error)
           ? `I'm getting more questions than I can answer right now. Try again in a few minutes, or email me at ${SITE.email}.`
-          : 'The reply stopped halfway. Send your message again.',
+          : 'The reply stopped halfway. Send your message again.';
+      },
     }),
   });
 }
