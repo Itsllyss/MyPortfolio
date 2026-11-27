@@ -7,7 +7,9 @@ export type WorkflowStep = {
   text: string;
   short?: string; // label in the architecture strip (single-group projects)
   span?: string; // one-line "trigger to result" under that label
+  shot?: Shot; // cropped workflow screenshot shown under the step
 };
+export type Shot = { src: string; width: number; height: number };
 export type Phase = {
   id: string;
   tab: string;
@@ -29,34 +31,42 @@ export const FLEET_PHASES: Phase[] = [
     steps: [
       {
         title: 'Ad Lead Form Submission & Conversation AI Intake',
+        shot: { src: '/images/ghl-lifecycle-1.jpg', width: 2400, height: 1050 },
         text: 'Triggered on Meta/Google survey submission; creates/updates the CRM opportunity, assigns the lead, fires Meta Conversion API, alerts the team, sends a welcome email, and launches Conversation AI to qualify replies (Positive, Neutral, Future, Negative, or Timeout) with automatic customer service follow-up tasks.',
       },
       {
         title: 'Waitlist Follow-Up (7-Day & 14-Day Loops)',
+        shot: { src: '/images/ghl-lifecycle-2.jpg', width: 2400, height: 478 },
         text: 'Triggered when `waitlist-no-vehicle` is tagged; moves the opportunity to Waitlist, sends business-hours (9 AM–6 PM EST) SMS confirmation, and runs automated 7-day and 14-day check-in loops while the lead remains in the Waitlist stage.',
       },
       {
         title: 'Vehicle Offer Dispatch (Class-Based Routing)',
+        shot: { src: '/images/ghl-lifecycle-3.jpg', width: 2400, height: 946 },
         text: 'Triggered on `reservation-reviewed`; validates that a Vehicle Class Offer exists (alerting staff if blank) and dynamically routes customized SMS offers based on vehicle class (`Midsize`, `Fullsize`, or `SUV`) during business hours.',
       },
       {
         title: 'Offer Acceptance & Security Deposit Invoice',
+        shot: { src: '/images/ghl-lifecycle-4.jpg', width: 2400, height: 565 },
         text: 'Triggered when the customer replies to accept; updates the opportunity to Approve Security Deposit, sends an SMS acceptance confirmation during business hours, dispatches the Security Deposit invoice, and swaps offer tags for `deposit-invoice-sent`.',
       },
       {
         title: 'Security Deposit Received & Pickup Instructions',
+        shot: { src: '/images/ghl-lifecycle-5.jpg', width: 2400, height: 621 },
         text: 'Triggered when the security deposit invoice is paid; updates the opportunity stage, alerts staff internally, sends pickup scheduling details via SMS during business hours, and clears deposit/waitlist tags.',
       },
       {
         title: 'Pickup Time Confirmed',
+        shot: { src: '/images/ghl-lifecycle-6.jpg', width: 1782, height: 607 },
         text: 'Triggered when the pickup appointment status is confirmed; sends an SMS confirmation and applies `pickup-confirmed` and `rental-invoice-sent` tags to initiate billing.',
       },
       {
         title: 'Rental Invoice Dispatch (Daily & Weekly Rate Tiers)',
+        shot: { src: '/images/ghl-lifecycle-7.jpg', width: 1513, height: 1477 },
         text: 'Splits leads by `Rental Type` (`Daily` vs. `Weekly`) and `Vehicle Class` (`Midsize`, `Fullsize`, `SUV`) to dispatch exact rate-tiered rental invoices ($55/$60/$65 daily or weekly rates), moving opportunities to Awaiting Rental Payment and alerting staff if a vehicle class is missing.',
       },
       {
         title: 'Rental Invoice Paid & Vehicle Assigned',
+        shot: { src: '/images/ghl-lifecycle-8.jpg', width: 2400, height: 888 },
         text: 'Triggered upon rental payment; locates the opportunity, updates status to Vehicle Assigned, sends an SMS payment confirmation receipt, and clears the `rental-invoice-sent` tag.',
       },
     ],
@@ -70,18 +80,22 @@ export const FLEET_PHASES: Phase[] = [
     steps: [
       {
         title: 'Weekly Recurring Payment',
+        shot: { src: '/images/ghl-billing-1.jpg', width: 2400, height: 1116 },
         text: 'Triggered by the `active-rental` tag for weekly renters; runs a 7-day cycle and branches by vehicle class (`Midsize`, `Fullsize`, `SUV`) to automatically dispatch recurring weekly invoices (with internal fallback alerts if unmapped).',
       },
       {
         title: 'Weekly & Daily Payment Reminders',
+        shot: { src: '/images/ghl-billing-2.jpg', width: 2400, height: 837 },
         text: 'Monitors sent/viewed invoices at 4:00 PM; sends a 2-hour pre-due SMS reminder if unpaid, re-checks at 7:00 PM, and triggers an overdue payment SMS alert if the status is still Sent or Viewed.',
       },
       {
         title: 'Contract Renewal Tracking (25-Day Active Rental Reminder)',
+        shot: { src: '/images/ghl-billing-3.jpg', width: 2400, height: 724 },
         text: 'Waits 25 days into an active rental cycle, verifies the `active-rental` tag, sends a return/renewal SMS reminder, creates a `#1 Contract Expiring in 3 Days` task, and escalates to a `#2 Contract Due Today` task and SMS upon timeout.',
       },
       {
         title: 'Contract Renewal Tracking (Customer Replied)',
+        shot: { src: '/images/ghl-billing-4.jpg', width: 2400, height: 809 },
         text: 'Parses incoming SMS replies for `"Extend"` or `"Return"`. If `"Extend"`, applies `extend-contract`, confirms via SMS, creates a `#2 Send Extension Agreement` task, and checks 3 days after day 28 to flag unsigned contracts; if `"Return"`, sends return confirmation instructions.',
       },
     ],
@@ -95,22 +109,27 @@ export const FLEET_PHASES: Phase[] = [
     steps: [
       {
         title: 'Maintenance 23-Day Reminder & Overdue Escalation',
+        shot: { src: '/images/ghl-maint-1.jpg', width: 2400, height: 693 },
         text: 'Triggered on active rental; waits 16 days (7 days prior to the 23-day mark), creates a maintenance task, waits 7 days, sends an SMS maintenance reminder, updates the opportunity, and runs a 4-day verification loop that escalates overdue vehicles with `maintenance-due` tags, SMS alerts, and internal tasks.',
       },
       {
         title: 'Maintenance Completed (Fleet-Specific Routing)',
+        shot: { src: '/images/ghl-maint-2.jpg', width: 2400, height: 1093 },
         text: 'Triggered on maintenance completion; verifies active rental status and branches by specific vehicle unit (e.g., `MS3-Corolla Red` vs. standard fleet) to remove completed maintenance workflows and reset tags.',
       },
       {
         title: 'Maintenance Completed (Due Tag Removal & Reset)',
+        shot: { src: '/images/ghl-maint-3.jpg', width: 2400, height: 1113 },
         text: 'Checks assigned vehicle codes upon maintenance completion to cleanly remove lingering due-date workflows and reset vehicle tracking tags.',
       },
       {
         title: 'Maintenance 14-Day Cycle Reminder',
+        shot: { src: '/images/ghl-maint-4.jpg', width: 2400, height: 492 },
         text: 'Triggered when `maintenance-complete` is applied during an active rental; waits 7 days, schedules a `#1 Maintenance Due in 7 Days` task, waits another 7 days to send the maintenance SMS reminder and `#3 Maintenance Due Today` task, and re-checks after 1 day to flag any uncompleted maintenance as due.',
       },
       {
         title: 'Stop Tracking on Rental End',
+        shot: { src: '/images/ghl-maint-5.jpg', width: 1480, height: 654 },
         text: 'Triggered when the `active-rental` tag is removed; immediately removes the contact from all active maintenance and renewal workflows so former renters never receive fleet alerts.',
       },
     ],

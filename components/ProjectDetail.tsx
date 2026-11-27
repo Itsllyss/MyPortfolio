@@ -3,11 +3,7 @@
 import {
   CalendarClock,
   CalendarX,
-  ChevronDown,
   Download,
-  ExternalLink,
-  Eye,
-  EyeOff,
   Maximize2,
   Siren,
   Wrench,
@@ -23,51 +19,59 @@ import Rich from './Rich';
 
 const ALERT_ICONS = [Wrench, Siren, CalendarClock, CalendarX];
 
+type Zoom = { src: string; width: number; height: number; alt: string; title: string };
+
+// One clickable workflow screenshot; opens the full-screen lightbox.
+function Shot({ zoom, onOpen, className }: { zoom: Zoom; onOpen: (z: Zoom) => void; className: string }) {
+  return (
+    <button
+      type="button"
+      className={`shot-link ${className}`}
+      onClick={() => onOpen(zoom)}
+      aria-haspopup="dialog"
+      aria-label={`Open the ${zoom.title} workflow full screen`}
+    >
+      <img src={zoom.src} alt={zoom.alt} width={zoom.width} height={zoom.height} loading="lazy" decoding="async" />
+      <span className="wf-shot-open" aria-hidden="true">
+        <Maximize2 size={16} />
+      </span>
+    </button>
+  );
+}
+
+// Every step is an open card: its explanation, then its workflow screenshot.
 function PhasePanel({ phase, uid, label }: { phase: Phase; uid: string; label: string }) {
-  const [preview, setPreview] = useState(false);
-  const [zoomed, setZoomed] = useState(false);
+  const [zoom, setZoom] = useState<Zoom | null>(null);
+  const [open, setOpen] = useState(false);
+  const show = (z: Zoom) => {
+    setZoom(z);
+    setOpen(true);
+  };
   const img = phase.image;
+  const whole: Zoom | null = img ? { ...img, title: phase.title } : null;
+  const tool = phase.steps[0]?.shot?.src.includes('/make-') ? 'Make.com scenario' : 'GoHighLevel workflow';
+
   return (
     <>
       <div className="phase-head">
         <h3>{phase.title}</h3>
-        <div className="phase-actions">
-          {img && (
-            <button type="button" className="btn btn-primary btn-sm" onClick={() => setZoomed(true)} aria-haspopup="dialog">
-              <Maximize2 size={16} aria-hidden="true" />
-              Open workflow diagram
-            </button>
-          )}
-          {phase.pdf && (
-            <>
-              <a className="btn btn-primary btn-sm" href={phase.pdf} target="_blank" rel="noopener noreferrer">
-                <ExternalLink size={16} aria-hidden="true" />
-                View / Download Workflow PDF
-              </a>
-              <a className="btn btn-ghost btn-sm" href={phase.pdf} download>
-                <Download size={16} aria-hidden="true" />
-                Download
-              </a>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                aria-expanded={preview}
-                aria-controls={`${uid}-pdf`}
-                onClick={() => setPreview((v) => !v)}
-              >
-                {preview ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
-                {preview ? 'Hide preview' : 'Preview here'}
+        {(whole || phase.pdf) && (
+          <div className="phase-actions">
+            {whole && (
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => show(whole)} aria-haspopup="dialog">
+                <Maximize2 size={16} aria-hidden="true" />
+                Open workflow diagram
               </button>
-            </>
-          )}
-        </div>
+            )}
+            {phase.pdf && (
+              <a className="link phase-pdf" href={phase.pdf} download>
+                <Download size={15} aria-hidden="true" />
+                Download all as PDF
+              </a>
+            )}
+          </div>
+        )}
       </div>
-
-      {preview && phase.pdf && (
-        <div id={`${uid}-pdf`} className="pdf-frame">
-          <iframe src={`${phase.pdf}#view=FitH`} title={`${phase.title} workflow PDF`} loading="lazy" />
-        </div>
-      )}
 
       {phase.lead && (
         <>
@@ -76,50 +80,42 @@ function PhasePanel({ phase, uid, label }: { phase: Phase; uid: string; label: s
         </>
       )}
 
-      {img && (
-        <>
-          <button
-            type="button"
-            className="shot-link phase-shot"
-            onClick={() => setZoomed(true)}
-            aria-haspopup="dialog"
-            aria-label="Open the full workflow diagram"
-          >
-            <img src={img.src} alt={img.alt} width={img.width} height={img.height} loading="lazy" />
-            <span className="wf-shot-open" aria-hidden="true">
-              <Maximize2 size={16} />
-            </span>
-          </button>
-          <Lightbox
-            open={zoomed}
-            onClose={() => setZoomed(false)}
-            title={phase.title}
-            src={img.src}
-            alt={img.alt}
-            width={img.width}
-            height={img.height}
-          />
-        </>
-      )}
-
       <ol className="steps">
         {phase.steps.map((s, i) => (
-          <li key={s.title}>
-            <details className="step" id={`${uid}-step-${i}`} open={i === 0}>
-              <summary>
-                <span className="step-num">
-                  {label} {i + 1}
-                </span>
-                <span className="step-title">{s.title}</span>
-                <ChevronDown size={18} className="step-chev" aria-hidden="true" />
-              </summary>
-              <p>
-                <Rich text={s.text} />
-              </p>
-            </details>
+          <li key={s.title} className="step" id={`${uid}-step-${i}`}>
+            <h4 className="step-head">
+              <span className="step-num">
+                {label} {i + 1}
+              </span>
+              <span className="step-title">{s.title}</span>
+            </h4>
+            <p>
+              <Rich text={s.text} />
+            </p>
+            {s.shot && (
+              <Shot
+                className="step-shot"
+                onOpen={show}
+                zoom={{ ...s.shot, title: s.title, alt: `${tool} for ${label.toLowerCase()} ${i + 1}: ${s.title}` }}
+              />
+            )}
           </li>
         ))}
       </ol>
+
+      {whole && <Shot className="phase-shot" onOpen={show} zoom={whole} />}
+
+      {zoom && (
+        <Lightbox
+          open={open}
+          onClose={() => setOpen(false)}
+          title={zoom.title}
+          src={zoom.src}
+          alt={zoom.alt}
+          width={zoom.width}
+          height={zoom.height}
+        />
+      )}
     </>
   );
 }
@@ -270,11 +266,10 @@ export default function ProjectDetail({ project, config, open, onClose }: Props)
     document.getElementById(`${uid}-tab-${next}`)?.focus();
   };
 
-  // Single-group projects: a strip node opens and scrolls to its step.
+  // Single-group projects: a strip node scrolls to its step.
   const jumpToStep = (i: number) => {
-    const el = document.getElementById(`${uid}-step-${i}`) as HTMLDetailsElement | null;
+    const el = document.getElementById(`${uid}-step-${i}`);
     if (!el) return;
-    el.open = true;
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 

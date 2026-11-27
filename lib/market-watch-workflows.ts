@@ -9,6 +9,12 @@ export const MARKET_WATCH: Phase = {
   short: 'Pipeline',
   title: 'Daily Market Watch Autonomous Pipeline: 2-page execution & scenario proof',
   pdf: '/docs/Project-3-Daily-Market-Watch-Workflows.pdf',
+  image: {
+    src: '/images/market_watch_execution_clean.jpg',
+    width: 1176,
+    height: 878,
+    alt: 'Claude scheduled task run: Daily Market Watch used Homer, published the Daily Market Watch artifact, then ran the Make scenario Daily Campaign Update to Outlook Draft, completed in 866 ms using 1 credit.',
+  },
   steps: [
     {
       title: 'Autonomous Daily Schedule & MCP Connectors',
