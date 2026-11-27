@@ -2,6 +2,7 @@
 
 import { BOOKING_WORKFLOWS } from './booking-workflows';
 import { FLEET_PHASES, FLEET_WORKFLOW_COUNT, type Phase } from './fleet-workflows';
+import { INVOICE_WORKFLOW } from './invoice-workflow';
 import { LISTING_SCENARIOS } from './listing-workflows';
 import { MARKET_WATCH } from './market-watch-workflows';
 import type { ProjectId } from './projects';
@@ -46,5 +47,12 @@ export const DETAILS: Partial<Record<ProjectId, DetailConfig>> = {
     stepLabel: 'Step',
     extraStack: [],
     engine: 'booking',
+  },
+  invoice: {
+    cta: 'See how it works',
+    archTitle: `Architecture: a ${INVOICE_WORKFLOW.steps.length}-node n8n workflow, from upload form to expense ledger`,
+    groups: [INVOICE_WORKFLOW],
+    stepLabel: 'Step',
+    extraStack: [],
   },
 };

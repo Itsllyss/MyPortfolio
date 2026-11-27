@@ -22,6 +22,21 @@ export default function ProjectThumb({ id }: { id: ProjectId }) {
     );
   }
 
+  if (id === 'invoice') {
+    return (
+      <div className="thumb thumb-shot">
+        <img
+          src="/projects/invoice-workflow.jpg"
+          alt="n8n workflow: Gemini analyzes the receipt, the JSON is parsed, the file is uploaded to Drive, and a Total Over 500 check routes to Log Pending Approval or Log Auto-Approved in Google Sheets"
+          width={980}
+          height={612}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    );
+  }
+
   if (id === 'booking') {
     return (
       <div className="thumb thumb-shot">

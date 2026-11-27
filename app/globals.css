@@ -807,6 +807,9 @@ button.link {
   inset: 0;
   border-radius: inherit;
 }
+.pgrid > .pcard-wide {
+  grid-column: 1 / -1;
+}
 .pcard-wide {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
@@ -1323,6 +1326,27 @@ button.link {
   background: var(--badge-bg);
   color: var(--badge-ink);
   white-space: nowrap;
+}
+
+/* more than 4 steps: two rows of 3, no line back to the row start */
+@media (min-width: 1001px) {
+  .arch.arch-rows {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+  .arch-rows li:nth-child(3n + 1)::before {
+    display: none;
+  }
+}
+.phase-lead {
+  margin-top: 0;
+}
+.phase-shot {
+  position: relative;
+  width: 100%;
+  margin-top: 18px;
+  padding: 0;
+  cursor: zoom-in;
 }
 
 /* ---------- Booking engine (Project 4) ---------- */

@@ -1,9 +1,9 @@
-// The four case studies shown as cards when the avatar writes <<projects>>.
+// The five case studies shown as cards when the avatar writes <<projects>>.
 // Every badge is a fact taken from the SOPs or the screenshot in the source
 // documents. Add time-saved figures (e.g. "25–30 hrs saved/week") only once
 // you have the numbers to back them.
 
-export type ProjectId = 'fleet' | 'listings' | 'ai' | 'booking';
+export type ProjectId = 'fleet' | 'listings' | 'ai' | 'booking' | 'invoice';
 
 export type Project = {
   id: ProjectId;
@@ -50,6 +50,15 @@ export const PROJECTS: Project[] = [
     stack: ['GoHighLevel', 'CRM Architecture', 'SMS & Email Automation', 'Tag State Machine', 'Lead Recovery'],
     metrics: ['4 modular workflows', '1-minute missed-call text-back', '24 h and 2 h appointment reminders'],
     ask: 'Walk me through the booking, no-show and lead recovery engine',
+  },
+  {
+    id: 'invoice',
+    title: 'AI Invoice, Receipt & Expense Extraction Engine (n8n + Gemini Vision)',
+    summary:
+      'Autonomous document intake and expense approval: Gemini Vision reads receipt images and PDFs, renamed files are archived to Google Drive, and expenses over $500 are routed for approval in Google Sheets.',
+    stack: ['n8n', 'Google Gemini 2.5 Flash (Vision)', 'JavaScript', 'Google Drive API', 'Google Sheets API', 'JSON Parsing'],
+    metrics: ['6-node n8n workflow', 'PDF, PNG & JPG receipts', '$500 approval threshold'],
+    ask: 'Walk me through the AI invoice and receipt extraction workflow',
   },
 ];
 

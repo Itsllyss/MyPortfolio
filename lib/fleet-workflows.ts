@@ -13,7 +13,9 @@ export type Phase = {
   tab: string;
   short: string;
   title: string;
-  pdf: string;
+  pdf?: string; // workflow PDF to view or download
+  lead?: string; // "Problem solved" paragraph above the steps
+  image?: { src: string; width: number; height: number; alt: string }; // workflow screenshot, opens in the lightbox
   steps: WorkflowStep[];
 };
 

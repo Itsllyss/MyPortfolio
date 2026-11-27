@@ -56,8 +56,9 @@ function ProjectCard({ project, onAsk, wide }: { project: Project; onAsk?: Ask; 
 export function ProjectGrid({ onAsk }: { onAsk: Ask }) {
   return (
     <div className="pgrid">
-      {PROJECTS.map((p) => (
-        <ProjectCard key={p.id} project={p} onAsk={onAsk} />
+      {PROJECTS.map((p, i) => (
+        // an odd last card spans the row instead of sitting alone
+        <ProjectCard key={p.id} project={p} onAsk={onAsk} wide={i === PROJECTS.length - 1 && PROJECTS.length % 2 === 1} />
       ))}
     </div>
   );
@@ -73,8 +74,19 @@ export function ProjectSingle({ id }: { id: string }) {
 // never redrawn.
 const TOOLS: { group: string; items: { name: string; icon?: string; tile?: string }[] }[] = [
   { group: 'CRM and funnels', items: [{ name: 'GoHighLevel' }, { name: 'Agentbox CRM' }, { name: 'Systeme.io' }] },
-  { group: 'Boards and automation', items: [{ name: 'monday.com' }, { name: 'Make.com', icon: '/icons/make.svg' }] },
-  { group: 'AI and data', items: [{ name: 'Claude', icon: '/icons/claude.svg' }, { name: 'OpenAI' }, { name: 'Homer' }] },
+  {
+    group: 'Boards and automation',
+    items: [{ name: 'monday.com' }, { name: 'Make.com', icon: '/icons/make.svg' }, { name: 'n8n', icon: '/icons/n8n.svg' }],
+  },
+  {
+    group: 'AI and data',
+    items: [
+      { name: 'Claude', icon: '/icons/claude.svg' },
+      { name: 'Google Gemini Vision', icon: '/icons/googlegemini.svg' },
+      { name: 'OpenAI' },
+      { name: 'Homer' },
+    ],
+  },
   {
     group: 'Messages and booking',
     items: [

@@ -18,42 +18,88 @@ import { FLEET_REPORTING, type Phase } from '@/lib/fleet-workflows';
 import type { DetailConfig } from '@/lib/project-details';
 import type { Project } from '@/lib/projects';
 import BookingEngine from './BookingEngine';
+import Lightbox from './Lightbox';
 import Rich from './Rich';
 
 const ALERT_ICONS = [Wrench, Siren, CalendarClock, CalendarX];
 
 function PhasePanel({ phase, uid, label }: { phase: Phase; uid: string; label: string }) {
   const [preview, setPreview] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
+  const img = phase.image;
   return (
     <>
       <div className="phase-head">
         <h3>{phase.title}</h3>
         <div className="phase-actions">
-          <a className="btn btn-primary btn-sm" href={phase.pdf} target="_blank" rel="noopener noreferrer">
-            <ExternalLink size={16} aria-hidden="true" />
-            View / Download Workflow PDF
-          </a>
-          <a className="btn btn-ghost btn-sm" href={phase.pdf} download>
-            <Download size={16} aria-hidden="true" />
-            Download
-          </a>
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            aria-expanded={preview}
-            aria-controls={`${uid}-pdf`}
-            onClick={() => setPreview((v) => !v)}
-          >
-            {preview ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
-            {preview ? 'Hide preview' : 'Preview here'}
-          </button>
+          {img && (
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => setZoomed(true)} aria-haspopup="dialog">
+              <Maximize2 size={16} aria-hidden="true" />
+              Open workflow diagram
+            </button>
+          )}
+          {phase.pdf && (
+            <>
+              <a className="btn btn-primary btn-sm" href={phase.pdf} target="_blank" rel="noopener noreferrer">
+                <ExternalLink size={16} aria-hidden="true" />
+                View / Download Workflow PDF
+              </a>
+              <a className="btn btn-ghost btn-sm" href={phase.pdf} download>
+                <Download size={16} aria-hidden="true" />
+                Download
+              </a>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                aria-expanded={preview}
+                aria-controls={`${uid}-pdf`}
+                onClick={() => setPreview((v) => !v)}
+              >
+                {preview ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
+                {preview ? 'Hide preview' : 'Preview here'}
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {preview && (
+      {preview && phase.pdf && (
         <div id={`${uid}-pdf`} className="pdf-frame">
           <iframe src={`${phase.pdf}#view=FitH`} title={`${phase.title} workflow PDF`} loading="lazy" />
         </div>
+      )}
+
+      {phase.lead && (
+        <>
+          <h4 className="report-h">Problem solved</h4>
+          <p className="report-lead phase-lead">{phase.lead}</p>
+        </>
+      )}
+
+      {img && (
+        <>
+          <button
+            type="button"
+            className="shot-link phase-shot"
+            onClick={() => setZoomed(true)}
+            aria-haspopup="dialog"
+            aria-label="Open the full workflow diagram"
+          >
+            <img src={img.src} alt={img.alt} width={img.width} height={img.height} loading="lazy" />
+            <span className="wf-shot-open" aria-hidden="true">
+              <Maximize2 size={16} />
+            </span>
+          </button>
+          <Lightbox
+            open={zoomed}
+            onClose={() => setZoomed(false)}
+            title={phase.title}
+            src={img.src}
+            alt={img.alt}
+            width={img.width}
+            height={img.height}
+          />
+        </>
       )}
 
       <ol className="steps">
@@ -261,7 +307,10 @@ export default function ProjectDetail({ project, config, open, onClose }: Props)
           <section className="detail-arch" aria-labelledby={`${uid}-arch`}>
             <h3 id={`${uid}-arch`}>{config.archTitle}</h3>
             {config.engine ? null : single ? (
-              <ol className="arch" style={{ '--n': config.groups[0].steps.length } as CSSProperties}>
+              <ol
+                className={`arch${config.groups[0].steps.length > 4 ? ' arch-rows' : ''}`}
+                style={{ '--n': config.groups[0].steps.length } as CSSProperties}
+              >
                 {config.groups[0].steps.map((s, i) => (
                   <li key={s.title}>
                     <button type="button" className="arch-node" onClick={() => jumpToStep(i)}>

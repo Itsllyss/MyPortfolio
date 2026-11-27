@@ -10,6 +10,7 @@ export const ABOUT = {
   stack: [
     { name: 'GoHighLevel' },
     { name: 'Make.com', icon: '/icons/make.svg' },
+    { name: 'n8n', icon: '/icons/n8n.svg' },
     { name: 'monday.com' },
     { name: 'Claude', icon: '/icons/claude.svg' },
     { name: 'OpenAI' },
